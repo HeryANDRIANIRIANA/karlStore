@@ -1,0 +1,97 @@
+.trefle-button-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-trefle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+.btn-trefle:hover {
+  background-color: #218838;
+}
+
+.satellite {  
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  pointer-events:auto;
+  /* background-color: #17a2b8; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+  color: #0f0; /* vert fluo */
+  /* font-weight: bold; */
+  border: 0px solid #0f0;
+  /* background: black; */
+  /* box-shadow: 0 0 10px #0f0, 0 0 20px #0f0, 0 0 40px #0f0; */
+    box-shadow:
+    0 0 5px #fff200,
+    0 0 10px #fff200,
+    0 0 20px #fff200,
+    inset 0 0 5px #fff200,
+    inset 0 0 10px #fff200;
+  transition: 0.2s;
+  animation: neon-glow 1.5s infinite alternate;
+  
+}
+
+.satellite:hover {
+  background: #fff200;
+  box-shadow: 0 0 20px #0f0, 0 0 40px #0f0, 0 0 80px #0f0;
+}
+
+/* Position des satellites (demi-cercle) */
+.trefle-button-wrapper.open .satellite-1 {
+    pointer-events:auto;
+  transform:  rotate(40deg) translate(60px, 25px)  rotate(-40deg);
+  opacity: 1;
+}
+.trefle-button-wrapper.open .satellite-2 {
+    pointer-events:auto;
+  transform:  rotate(40deg) translate(63px, -20px)  rotate(-40deg);
+  opacity: 1;
+}
+.trefle-button-wrapper.open .satellite-3 {
+    pointer-events:auto;
+  transform:  rotate(40deg) translate(20px, -63px)  rotate(-40deg);
+  opacity: 1;
+}
+.trefle-button-wrapper.open .satellite-4 {
+    pointer-events:auto;
+  transform:  rotate(40deg) translate(-25px, -60px)  rotate(-40deg);
+  opacity: 1;
+}
+.trefle-button-wrapper.open {
+pointer-events:auto;    
+}
+
+@keyframes rotateMulti {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(1800deg); }
+}
+
+.btn-trefle.rotating span {
+  /* animation: rotateMulti 3s infinite linear ; */
+  animation: rotateMulti 1.6s ease-out;
+}
+
+.satellite a {
+	margin-left:10px;
+}

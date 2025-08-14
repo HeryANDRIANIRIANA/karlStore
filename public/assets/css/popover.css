@@ -1,0 +1,22 @@
+ #popover {
+            width: 200px;
+            /* background-color: #3498db; */
+            /* color: white; */
+            border-radius: 5px;
+            display: none;
+        }
+#popover::before {
+    content: '';
+    position: absolute;
+    left: -15px; /* Place la queue en bas du popover */
+    top: 50%;
+    transform: translateY(-50%);
+    transform: rotate(90deg);
+    border-width: 10px 10px 0 10px; /* Crée un triangle pointant vers le bas */
+    border-style: solid;
+    border-color: lightgrey transparent transparent transparent;
+}
+.card-header{
+	padding-top: 0px; /* Ajuste le padding selon tes besoins */
+    padding-bottom: 0px;
+}

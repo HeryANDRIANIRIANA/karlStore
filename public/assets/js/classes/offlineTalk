@@ -1,0 +1,91 @@
+Très bien, si ton objectif est de créer un **système d’appel vocal totalement indépendant d’Internet**, en **réseau local uniquement**, alors **WebRTC avec Socket.IO** ou les **API cloud (Twilio, etc.)** ne conviennent pas, car elles dépendent d’Internet (serveurs STUN/TURN, APIs, etc.).
+
+### ✅ Ce qu’il te faut :
+
+Créer une **infrastructure VoIP locale** avec Node.js, en mode peer-to-peer ou via un serveur SIP local. Voici les options réalistes **en local sans dépendre d’Internet** :
+
+---
+
+## 🔧 **Option 1 : Serveur SIP local + Node.js**
+
+> Tu installes un vrai serveur SIP sur ton réseau local pour gérer les appels vocaux (comme le ferait un standard téléphonique IP).
+
+### 🔹 Serveur SIP open source possible :
+
+* **Asterisk** (le plus connu, stable et puissant)
+* **FreeSWITCH**
+* **Kamailio** (plus complexe)
+
+### 🔹 Rôle de Node.js :
+
+* Node.js sert d’**interface de contrôle ou d'automatisation** :
+
+  * déclenche des appels via une API locale d’Asterisk
+  * gère les utilisateurs
+  * logs, supervision, etc.
+
+### 🔹 Fonctionnement :
+
+* Chaque poste utilise un **softphone SIP** (Ex : Linphone, Zoiper, Jitsi) ou un navigateur avec **JsSIP**.
+* Les communications passent via **ton serveur SIP local** (Asterisk).
+* Node.js peut envoyer des commandes à Asterisk (via AMI ou ARI).
+
+---
+
+## 🔧 **Option 2 : WebRTC 100% local + serveur de signaling en Node.js**
+
+> Créer un système WebRTC local avec Node.js, sans STUN/TURN sur Internet.
+
+### 🔹 Composants nécessaires :
+
+* Serveur de signaling en **Node.js + Socket.IO** (local)
+* Deux postes sur le même réseau avec un navigateur compatible WebRTC
+* Un **serveur TURN local** si jamais les machines sont sur des sous-réseaux différents (ex: Coturn installé localement)
+
+### 🔹 Avantages :
+
+* Pas besoin de service extérieur
+* Pas besoin de téléphone SIP
+* Fonctionne dans un navigateur
+
+### ⚠️ Inconvénients :
+
+* Ne fonctionne pas bien en cas de NAT local (réseau Wi-Fi + Ethernet différents) sans TURN local
+
+---
+
+## 🔧 **Option 3 : Audio peer-to-peer avec WebSockets et Node.js (DIY pur)**
+
+> Construire un système d’appel vocal artisanal via WebSocket et `getUserMedia`.
+
+### 🔹 Principe :
+
+* Utiliser `getUserMedia()` pour capturer la voix
+* Envoyer les chunks audio encodés via WebSocket à l’autre poste
+* Rejouer le son avec `AudioContext` sur le poste distant
+
+### 🔹 Avantages :
+
+* Pas de WebRTC, pas de STUN/TURN, simple local
+* Tu as un contrôle total
+
+### 🔹 Inconvénients :
+
+* Qualité audio souvent médiocre
+* Besoin de gérer le buffering, latence, synchronisation
+
+---
+
+## 👉 Recommandation
+
+Si tu veux **qualité, robustesse et local**, je te recommande :
+
+✅ **Asterisk (ou FreeSWITCH) + Node.js + softphones SIP**
+➡️ Tu installes un serveur SIP local et tu l’automatises avec Node.js.
+
+Souhaites-tu :
+
+* Un **exemple de configuration Asterisk** + Node.js ?
+* Ou un **système simple en WebRTC local** (en HTML/JS + Node.js) pour test rapide ?
+
+Option 1 : Serveur SIP local + Node.js

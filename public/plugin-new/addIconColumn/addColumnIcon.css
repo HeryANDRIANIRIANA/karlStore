@@ -1,0 +1,49 @@
+.feather-icon-red {
+  width: 16px;
+  height: 16px;
+  stroke: #f44336; /* couleur rouge comme les SVG feather */
+  stroke-width: 2;
+  fill: none;
+}
+
+.feather-icon-animedRed {
+    width: 16px;
+  height: 16px;
+  stroke: red; /* couleur rouge comme les SVG feather */
+  stroke-width: 2;
+  fill: grey;
+  animation: colorPulseRed 0.5s infinite alternate;
+  transition: color 0.25s ease;
+}
+
+@keyframes colorPulseRed {
+  from {
+    stroke: red;
+	fill: grey;
+  }
+  to {
+    stroke: grey;
+	fill: red;
+  }
+}
+
+.feather-icon-animedGreen {
+    width: 16px;
+  height: 16px;
+  stroke: green; /* couleur rouge comme les SVG feather */
+  stroke-width: 2;
+  fill: none;
+  animation: colorPulseRed 0.5s infinite alternate;
+  transition: color 0.25s ease;
+}
+
+@keyframes colorPulseGreen {
+  from {
+    stroke: green;
+	fill: none;
+  }
+  to {
+    stroke: blue;
+	fill: red;
+  }
+}

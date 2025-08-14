@@ -1,0 +1,436 @@
+L’événement `page.dt` de DataTables est déclenché **à chaque changement de page** dans un tableau.
+
+### Exemple d'utilisation :
+
+```javascript
+$('#example').on('page.dt', function () {
+  console.log('La page a changé');
+});
+```
+
+### Détails :
+
+* `page.dt` est un événement spécifique de DataTables.
+* Il est déclenché **après** que la nouvelle page ait été affichée.
+* Il peut être utilisé pour lancer un spinner, effectuer un suivi, mettre à jour des éléments externes, etc.
+
+Souhaites-tu intercepter ce changement *avant* ou *après* qu’il se produise ?
+
+Pour ajouter une **colonne qui affiche les occurrences (numéros de ligne relatifs à la pagination)** dans un DataTable, tu peux utiliser la **propriété `createdRow`** ou **une colonne définie avec `render`** dans la config `columns`.
+
+### ✅ Méthode recommandée : via `render` + `draw.dt`
+
+Cela affiche le bon numéro même après tri, recherche ou pagination.
+
+```javascript
+var table = $('#example').DataTable({
+  columnDefs: [
+    {
+      targets: 0, // la 1ère colonne (à adapter si nécessaire)
+      render: function (data, type, row, meta) {
+        // Calcul de l'index en fonction de la pagination
+        return meta.row + meta.settings._iDisplayStart + 1;
+      }
+    }
+  ]
+});
+```
+
+### Étapes à suivre :
+
+1. **Ajoute une colonne vide dans ton HTML** (en 1ère position ou ailleurs) :
+
+```html
+<table id="example">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Nom</th>
+      <th>Email</th>
+      <!-- etc. -->
+    </tr>
+  </thead>
+</table>
+```
+
+2. **Dans ta config DataTable**, utilise `render` pour générer dynamiquement l’index visible.
+
+---
+
+### 🔁 Mise à jour automatique sur changement de page
+
+Avec ce code, la mise à jour est automatique **à chaque draw** (tri, recherche, pagination).
+
+Souhaites-tu que ce numéro soit fixe (lié à la ligne dans la base) ou relatif à l'affichage (par exemple 1 à 10 pour la page 1) ?
+
+Parfait ! Puisque tu ne veux **pas modifier le HTML manuellement** et que tu veux **ajouter une colonne avec une icône de couleur différente à chaque ligne affichée**, voici la solution **entièrement en JavaScript**, côté DataTables.
+
+---
+
+### ✅ Exemple complet : Ajouter dynamiquement une colonne d’icône colorée
+
+```javascript
+// Initialisation du DataTable
+var table = $('#example').DataTable({
+  // On ajoute une colonne en premier (index 0) pour les icônes
+  columnDefs: [
+    {
+      targets: 0,
+      title: '', // titre vide
+      orderable: false,
+      searchable: false,
+      className: 'text-center',
+      render: function (data, type, row, meta) {
+        // Couleurs cycliques (par exemple 5 couleurs)
+        var couleurs = ['red', 'green', 'blue', 'orange', 'purple'];
+        var couleur = couleurs[meta.row % couleurs.length];
+
+        // Exemple avec une icône font-awesome (fa-circle)
+        return '<i class="fas fa-circle" style="color:' + couleur + ';"></i>';
+      }
+    }
+  ],
+  // On demande à DataTables d'ajouter automatiquement une colonne à gauche
+  initComplete: function () {
+    // Injecte dynamiquement une colonne vide au début de chaque ligne (thead et tbody)
+    $('#example thead tr').prepend('<th></th>');
+    $('#example tbody tr').each(function () {
+      $(this).prepend('<td></td>');
+    });
+  }
+});
+```
+
+---
+
+### 📌 Prérequis :
+
+* Inclure Font Awesome (pour l'icône) via CDN :
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+```
+
+---
+
+### Résultat :
+
+* Une **colonne d’icône** apparaît automatiquement à gauche.
+* Chaque ligne a une **couleur différente** selon son index.
+* Tu n’as rien à ajouter dans le HTML manuellement.
+
+Souhaites-tu que la couleur des icônes soit aléatoire, cyclique, ou basée sur des données spécifiques de la ligne ?
+
+
+Bien sûr ! Voici un rappel clair sur comment fonctionnent `hideCols` et `showCols` dans DataTables (en JavaScript pur, sans plugin supplémentaire).
+
+> ⚠️ Ces fonctions ne font pas partie de l’API officielle de DataTables, mais elles peuvent être comprises comme des usages de la méthode `.column().visible()`.
+
+---
+
+### ✅ **Cacher une ou plusieurs colonnes :**
+
+```javascript
+// Cacher la colonne d'index 2 (troisième colonne)
+table.column(2).visible(false);
+
+// Cacher plusieurs colonnes
+[1, 3, 4].forEach(function(index) {
+  table.column(index).visible(false);
+});
+```
+
+---
+
+### ✅ **Afficher une ou plusieurs colonnes :**
+
+```javascript
+// Afficher la colonne d'index 2
+table.column(2).visible(true);
+
+// Afficher plusieurs colonnes
+[1, 3, 4].forEach(function(index) {
+  table.column(index).visible(true);
+});
+```
+
+---
+
+### 🔄 Astuce : basculer la visibilité
+
+```javascript
+var col = table.column(2);
+col.visible(!col.visible());
+```
+
+---
+
+### 🧠 À retenir :
+
+* `.column(index)` cible une colonne.
+* `.visible(true|false)` l'affiche ou la cache.
+* L'index commence à 0 **et inclut toutes les colonnes**, visibles ou non.
+
+Souhaites-tu encapsuler ça dans des fonctions `hideCols`/`showCols` personnalisées ?
+
+
+Parfait ! Voici une version **complète, autonome et dynamique** qui :
+
+1. **Ajoute automatiquement** une colonne à gauche pour les icônes colorées (sans modifier le HTML).
+2. **Met à jour dynamiquement** les icônes à chaque draw (pagination, tri, recherche...).
+3. Utilise des **couleurs cycliques** et **Font Awesome** pour les icônes.
+
+---
+
+### ✅ Exemple complet
+
+```html
+<!-- Font Awesome pour les icônes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<table id="example" class="display" width="100%"></table>
+
+<script>
+  // Données fictives (remplace avec ton ajax ou autre source)
+  var dataSet = [
+    ["Alice", "alice@email.com"],
+    ["Bob", "bob@email.com"],
+    ["Charlie", "charlie@email.com"],
+    ["David", "david@email.com"],
+    ["Eva", "eva@email.com"]
+  ];
+
+  // Couleurs cycliques
+  var couleurs = ['red', 'green', 'blue', 'orange', 'purple'];
+
+  // Initialisation du DataTable
+  var table = $('#example').DataTable({
+    data: dataSet,
+    columns: [
+      { title: "Nom" },
+      { title: "Email" }
+    ],
+    initComplete: function () {
+      // Insère dynamiquement un <th> pour l'icône en tête
+      $('#example thead tr').prepend('<th></th>');
+    }
+  });
+
+  // À chaque draw, injecte ou met à jour les icônes
+  table.on('draw.dt', function () {
+    $('#example tbody tr').each(function (index) {
+      var couleur = couleurs[index % couleurs.length];
+      var icone = '<i class="fas fa-circle" style="color:' + couleur + '"></i>';
+
+      // Si la cellule d'icône n'existe pas encore, l'ajouter
+      if ($(this).find('td.icon-col').length === 0) {
+        $(this).prepend('<td class="icon-col text-center">' + icone + '</td>');
+      } else {
+        $(this).find('td.icon-col').html(icone);
+      }
+    });
+  });
+</script>
+```
+
+---
+
+### 🔍 Résumé :
+
+* **Aucune modif manuelle dans le HTML**.
+* **Colonne d'icône ajoutée automatiquement**.
+* **Couleurs gérées dynamiquement** à chaque draw.
+* **Compatible avec des données dynamiques** (via Ajax, etc.).
+
+Souhaites-tu qu’on passe cette logique en plugin jQuery réutilisable (ex: `$.fn.addIconColumn()`)?
+
+
+Excellente idée 💡! On peut transformer cette logique en un **plugin jQuery réutilisable** qui fonctionne comme `feather.replace()`, par exemple :
+
+```js
+$.fn.addIconColumn();
+```
+
+---
+
+### ✅ Résultat final souhaité :
+
+* Tu initialises ton DataTable normalement.
+* Ensuite tu appelles :
+
+```js
+$('#example').addIconColumn({
+  columnIndex: 0,            // où insérer la colonne (par défaut : 0)
+  colors: ['red', 'green', 'blue'], // couleurs cycliques
+  iconClass: 'fas fa-circle' // icône Font Awesome
+});
+```
+
+---
+
+### 🧩 Plugin jQuery : `addIconColumn()`
+
+```javascript
+(function ($) {
+  $.fn.addIconColumn = function (options) {
+    var settings = $.extend({
+      columnIndex: 0,
+      colors: ['red', 'green', 'blue', 'orange', 'purple'],
+      iconClass: 'fas fa-circle'
+    }, options);
+
+    var $table = this;
+    var table = $table.DataTable();
+
+    // Ajouter <th> si nécessaire
+    if ($table.find('thead th.icon-head').length === 0) {
+      var $theadRow = $table.find('thead tr');
+      var iconHeader = $('<th class="icon-head"></th>');
+      $theadRow.children().eq(settings.columnIndex).before(iconHeader);
+    }
+
+    // Gérer les icônes à chaque draw
+    table.on('draw.dt', function () {
+      $table.find('tbody tr').each(function (rowIndex) {
+        var color = settings.colors[rowIndex % settings.colors.length];
+        var iconHTML = '<i class="' + settings.iconClass + '" style="color:' + color + '"></i>';
+        var $cells = $(this).children('td');
+
+        // Si la cellule n'existe pas encore
+        if ($cells.eq(settings.columnIndex).hasClass('icon-col') === false) {
+          $('<td class="icon-col text-center">' + iconHTML + '</td>')
+            .insertBefore($cells.eq(settings.columnIndex));
+        } else {
+          $cells.eq(settings.columnIndex).html(iconHTML);
+        }
+      });
+    });
+
+    // Forcer le premier draw si nécessaire
+    table.draw(false);
+
+    return this; // chainable
+  };
+})(jQuery);
+```
+
+---
+
+### ✅ Utilisation simple :
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+```
+
+```javascript
+var table = $('#example').DataTable({
+  data: [...],
+  columns: [...]
+});
+
+// Appel du plugin après initialisation
+$('#example').addIconColumn({
+  colors: ['crimson', 'darkgreen', 'navy'],
+  iconClass: 'fas fa-circle'
+});
+```
+
+---
+
+Souhaites-tu aussi un `destroy` propre pour retirer la colonne et nettoyer les événements si on veut le désactiver ?
+
+
+Excellente idée 💡! On peut transformer cette logique en un **plugin jQuery réutilisable** qui fonctionne comme `feather.replace()`, par exemple :
+
+```js
+$.fn.addIconColumn();
+```
+
+---
+
+### ✅ Résultat final souhaité :
+
+* Tu initialises ton DataTable normalement.
+* Ensuite tu appelles :
+
+```js
+$('#example').addIconColumn({
+  columnIndex: 0,            // où insérer la colonne (par défaut : 0)
+  colors: ['red', 'green', 'blue'], // couleurs cycliques
+  iconClass: 'fas fa-circle' // icône Font Awesome
+});
+```
+
+---
+
+### 🧩 Plugin jQuery : `addIconColumn()`
+
+```javascript
+(function ($) {
+  $.fn.addIconColumn = function (options) {
+    var settings = $.extend({
+      columnIndex: 0,
+      colors: ['red', 'green', 'blue', 'orange', 'purple'],
+      iconClass: 'fas fa-circle'
+    }, options);
+
+    var $table = this;
+    var table = $table.DataTable();
+
+    // Ajouter <th> si nécessaire
+    if ($table.find('thead th.icon-head').length === 0) {
+      var $theadRow = $table.find('thead tr');
+      var iconHeader = $('<th class="icon-head"></th>');
+      $theadRow.children().eq(settings.columnIndex).before(iconHeader);
+    }
+
+    // Gérer les icônes à chaque draw
+    table.on('draw.dt', function () {
+      $table.find('tbody tr').each(function (rowIndex) {
+        var color = settings.colors[rowIndex % settings.colors.length];
+        var iconHTML = '<i class="' + settings.iconClass + '" style="color:' + color + '"></i>';
+        var $cells = $(this).children('td');
+
+        // Si la cellule n'existe pas encore
+        if ($cells.eq(settings.columnIndex).hasClass('icon-col') === false) {
+          $('<td class="icon-col text-center">' + iconHTML + '</td>')
+            .insertBefore($cells.eq(settings.columnIndex));
+        } else {
+          $cells.eq(settings.columnIndex).html(iconHTML);
+        }
+      });
+    });
+
+    // Forcer le premier draw si nécessaire
+    table.draw(false);
+
+    return this; // chainable
+  };
+})(jQuery);
+```
+
+---
+
+### ✅ Utilisation simple :
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+```
+
+```javascript
+var table = $('#example').DataTable({
+  data: [...],
+  columns: [...]
+});
+
+// Appel du plugin après initialisation
+$('#example').addIconColumn({
+  colors: ['crimson', 'darkgreen', 'navy'],
+  iconClass: 'fas fa-circle'
+});
+```
+
+---
+
+Souhaites-tu aussi un `destroy` propre pour retirer la colonne et nettoyer les événements si on veut le désactiver ?
+

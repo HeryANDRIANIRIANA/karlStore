@@ -1,0 +1,21 @@
+/* .zindexToZero { */
+	/* z-index:0; */
+/* } */
+/* .table-fullScreen{ */
+	/* width:100%; */
+/* } */
+
+.dt-button-collection{
+	/* z-index:400; */
+	position:absolute;
+	
+	/* top:0px; */
+	/* left:0x; */
+}
+#dynamic-table1, #widget-container-col-1, #widget-box-1{
+	width:100%;
+	
+}
+.widget-body{
+	height:80%
+}

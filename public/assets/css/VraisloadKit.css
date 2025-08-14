@@ -1,0 +1,101 @@
+:root{
+	--spinner-size:120px;
+	--spinner-halfSize:60px;
+	--spinner-border-width:3px;
+	--spinner-border-color:var(--bs-light);
+	--spinner-border-top-color:var(--bs-warning);
+	--spinner-border-active-color:var(--bs-success);
+	--spinner-animation-duration:0.7s;
+	--mask-background-color:var(--bs-light);
+}
+
+.spinner01 {
+	box-sizing:border-box;
+	width:var(--spinner-size);
+	height:var(--spinner-size);
+	margin-top:calc(-1*var(--spinner-halfSize));
+	margin-left:calc(-1*var(--spinner-halfSize));
+	/* border:solid 1px green; */
+	transition:all 0.7s ease;
+}
+
+.centred-spinner {
+	position:absolute;
+	top:50%;
+	left:50%;
+	cursor:none;
+}
+
+.border-animed, .border-active{
+	box-sizing:border-box;
+	border-radius:50%;
+	border-width:var(--spinner-border-width);
+	border-style:solid;
+}
+
+.border-animed{
+	border-color:var(--spinner-border-color);
+	border-top-color:var(--spinner-border-top-color);
+	animation:spinnerRotate var(--spinner-animation-duration) linear infinite;
+}
+
+@keyframes spinnerRotate{
+	to{
+		transform:rotate(360deg);
+	}
+}	
+
+.border-active{
+	transition: all 0.7s ease;
+	border-color:var(--spinner-border-active-color);
+}
+
+.maskEnabled{
+	transition:all 0.7s ease;
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:var(--mask-background-color);
+}
+
+/* etape1 */
+.maskDisabled{
+	transition:all 0.7s ease;
+	top:50%;
+	left:calc(var(--spinner-halfSize)/2);
+	transform:translateY(calc(var(--spinner-halfSize)/2*-1));
+	width:0%;
+	height:0%;
+	border-radius:100%
+}
+
+.spinner01 div i{
+	transform:translate(25%,25%);
+	cursor:pointer;
+}
+
+.spinner-left-side{
+	position:absolute;
+	left:var(--spinner-halfSize);
+	top:50%;
+	transform:translate(50%,50%);
+}
+
+.spinner-reduced{
+	box-sizing:border-box;
+	content:"";
+	width:calc(var(--spinner-halfSize)/2);
+	height:calc(var(--spinner-halfSize)/2);
+}
+
+.spinner-reduced div i{
+	/* transform:translate(50%,-50%); */
+	/* margin-top:-50%; */
+	/* margin-left:-50%; */
+}
+
+.dt-button-collection{
+	position:absolute;
+}
