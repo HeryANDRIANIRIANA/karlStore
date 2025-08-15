@@ -1,6 +1,8 @@
 const express = require('express');
 const multer=require('multer');
-const odbc = require('odbc');
+// require('dotenv').config();
+// const odbc = require('odbc');
+const odbc = require('mysql2/promise');
 const exceljs = require('exceljs');
 const fs = require('fs');
 const https = require('https');
