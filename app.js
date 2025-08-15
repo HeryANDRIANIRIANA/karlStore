@@ -2,7 +2,7 @@ const express = require('express');
 const multer=require('multer');
 // require('dotenv').config();
 // const odbc = require('odbc');
-const odbc = require('mysql2');
+const odbc = require('mysql2/promise');
 const exceljs = require('exceljs');
 const fs = require('fs');
 const https = require('https');
@@ -32,7 +32,7 @@ const upload = multer({ storage: storage });
 // privatesModules
 const personnel=require('privateModule/personnel');
 const paramSalaire=require('privateModule/paramSalaire');
-// const Db=require('privateModule/Db');
+const Db=require('privateModule/Db');
 const Db2=require('privateModule/Db2');
 const etatSalaireBE=require('privateModule/etatSalaireBE');
 const mois2BE=require('privateModule/mois2BE');
