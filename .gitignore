@@ -4,3 +4,5 @@ public/images/
 public/plugin/
 public2.zip
 freedom.zip
+node_modules/*
+!node_modules/privatemodule/
